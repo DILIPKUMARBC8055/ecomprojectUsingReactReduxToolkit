@@ -10,7 +10,6 @@ import {
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 
-
 // Add data to the products collection only for one time so that they can be used again.
 const addDataToCollection = async () => {
   try {
