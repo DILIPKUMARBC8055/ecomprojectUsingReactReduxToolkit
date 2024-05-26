@@ -1,56 +1,59 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { useEffect } from "react";
+import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import HomePage from "./pages/HomePage/HomePage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Navbar from "./components/Navbar/Navbar";
+import CartPage from "./pages/CartPage/CartPage";
+import OrdersPage from "./pages/OrdersPage/OrdersPage";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+import { authActions } from "./redux/Auth/authRedux";
+import { useDispatch } from "react-redux";
 
 function App() {
+  const auth = getAuth();
+  const dispatch = useDispatch();
+
+  // Authenticate the user if he is already logged in and set the user in the auth context.
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dispatch(authActions.SET_AUTH_USER(user));
+      }
+    });
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+      <>
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+        <header>
+          <Navbar />
+        </header>{" "}
+        <Routes>
+          <Route path="/" exact element={<HomePage />} />{" "}
+          <Route path="/signup" exact element={<RegisterPage />} />{" "}
+          <Route path="/signin" exact element={<LoginPage />} />{" "}
+          <Route path="/cart" exact element={<CartPage />} />{" "}
+          <Route path="/myorders" exact element={<OrdersPage />} />{" "}
+          {/* NotFoundPage would be rendered if an invalid route is tried to access */}{" "}
+          <Route path="*" element={<NotFoundPage />} />{" "}
+        </Routes>{" "}
+      </>{" "}
     </div>
   );
 }
